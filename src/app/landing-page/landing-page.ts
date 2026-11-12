@@ -1,4 +1,4 @@
-import { Component, DoCheck, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
 import { DataStore } from '../data-store';
 import { ProductCardComponent } from '../product-cards/product-cards';
@@ -10,8 +10,13 @@ import { ProductCardComponent } from '../product-cards/product-cards';
   templateUrl: './landing-page.html',
   standalone: true,
 })
-export class LandingPage implements OnInit {
-  private dataStore = inject(DataStore);
-  products = this.dataStore;
-  ngOnInit() {}
+export class LandingPage {
+  readonly products = inject(DataStore);
+  readonly searchTerm = signal('');
+  readonly filteredProducts = computed(() => {
+    const query = this.searchTerm().trim().toLowerCase();
+    return this.products.products_array().filter((product) =>
+      product.name.toLowerCase().includes(query),
+    );
+  });
 }
