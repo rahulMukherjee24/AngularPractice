@@ -19,4 +19,8 @@ export class LandingPage {
       product.name.toLowerCase().includes(query),
     );
   });
+
+  applyDiscountCode() {
+    this.products.applyDiscountCode();
+  }
 }

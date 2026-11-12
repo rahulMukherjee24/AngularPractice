@@ -32,15 +32,59 @@
     <p class="text-gray-500 italic">Your cart is empty.</p>
     } @else {
     <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div class="mb-4 flex gap-2">
+            <input
+                id="discount-code"
+                #discountInput
+                type="text"
+                [value]="products.discountCode()"
+                (input)="products.setDiscountCode(discountInput.value)"
+                placeholder="Enter discount code"
+                class="flex-1 border border-gray-300 rounded-lg px-3 py-2"
+            />
+            <button
+                type="button"
+                (click)="applyDiscountCode()"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors cursor-pointer"
+            >
+                Apply
+            </button>
+            @if (products.appliedDiscountCode()) {
+            <button
+                type="button"
+                (click)="products.clearDiscountCode()"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition-colors cursor-pointer"
+            >
+                Clear
+            </button>
+            }
+        </div>
+
+        @if (products.discountError()) {
+        <p class="mb-3 text-sm text-red-600">{{ products.discountError() }}</p>
+        }
+
         <ul class="divide-y divide-gray-200 mb-4">
             @for (item of products.cart(); track item.product_id) {
             <app-product-card [product]="item"></app-product-card>
             }
         </ul>
-        <!-- Computed Total Price -->
-        <div class="border-t border-gray-300 pt-3 flex justify-between items-center text-xl font-bold">
-            <span>Total:</span>
-            <span>${{ products.cartTotalPrice() }}</span>
+
+        <div class="border-t border-gray-300 pt-3 space-y-2 text-base">
+            <div class="flex justify-between items-center">
+                <span>Subtotal:</span>
+                <span>${{ products.cartSubtotal() }}</span>
+            </div>
+            @if (products.discountAmount() > 0) {
+            <div class="flex justify-between items-center text-green-700">
+                <span>Discount ({{ products.appliedDiscountCode() }}):</span>
+                <span>-${{ products.discountAmount() }}</span>
+            </div>
+            }
+            <div class="flex justify-between items-center text-xl font-bold">
+                <span>Total:</span>
+                <span>${{ products.cartTotalPrice() }}</span>
+            </div>
         </div>
     </div>
     }
